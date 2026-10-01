@@ -1,0 +1,61 @@
+# Configuración de GitHub Pages
+
+# Tema Jekyll (opcional)
+theme: jekyll-theme-slate
+
+# Título del sitio
+title: Julius Robert Mayer - Simulador Interactivo
+description: Página web educativa con simuladores interactivos sobre las teorías científicas de Julius Robert Mayer
+
+# URL base (si no está en la raíz del dominio)
+# baseurl: /julius-mayer-simulator
+
+# URL completa del sitio (para SEO)
+url: "https://tu-usuario.github.io"
+
+# Configuración de Jekyll
+markdown: kramdown
+kramdown:
+  input: GFM
+
+# Excluir archivos
+exclude:
+  - .github
+  - .gitignore
+  - CONTRIBUTING.md
+  - LICENSE
+  - README.md
+  - node_modules
+  - package.json
+  - Gemfile
+  - Gemfile.lock
+  - .DS_Store
+  - .vscode
+
+# Configuración de Google Analytics (opcional)
+# google_analytics: UA-XXXXX-Y
+
+# Redes sociales (opcional)
+author:
+  name: Tu Nombre
+  email: tu-email@example.com
+  twitter: tu-twitter
+  github: tu-usuario
+
+# Configuración de plugins
+plugins:
+  - jekyll-sitemap
+  - jekyll-seo-tag
+
+# Configuración de compilación
+lsi: false
+safe: true
+source: .
+incremental: false
+highlighter: rouge
+gist:
+  noscript: false
+
+# Configuración de tiempo
+future: false
+unpublished: false

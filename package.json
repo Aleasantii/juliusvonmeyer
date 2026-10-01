@@ -1,0 +1,33 @@
+{
+  "name": "julius-mayer-simulator",
+  "version": "1.0.0",
+  "description": "Página web interactiva sobre Julius Robert Mayer con simuladores de sus teorías científicas",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx http-server -p 8000 -o",
+    "serve": "npx http-server",
+    "dev": "npx http-server -c-1"
+  },
+  "keywords": [
+    "julius-mayer",
+    "termodinámica",
+    "física",
+    "simulador",
+    "educativo",
+    "energía",
+    "calor",
+    "mecánica"
+  ],
+  "author": "Tu Nombre",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tu-usuario/julius-mayer-simulator.git"
+  },
+  "bugs": {
+    "url": "https://github.com/tu-usuario/julius-mayer-simulator/issues"
+  },
+  "homepage": "https://tu-usuario.github.io/julius-mayer-simulator",
+  "devDependencies": {},
+  "dependencies": {}
+}

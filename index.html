@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Julius Robert Mayer - Simulador de Teorías</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+
+        nav {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+            flex-wrap: wrap;
+            gap: 0;
+        }
+
+        nav button {
+            flex: 1;
+            padding: 15px 20px;
+            border: none;
+            background: white;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+            font-weight: 500;
+        }
+
+        nav button:hover {
+            background: #f0f0f0;
+        }
+
+        nav button.active {
+            background: white;
+            border-bottom-color: #667eea;
+            color: #667eea;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        section {
+            display: none;
+        }
+
+        section.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            color: #764ba2;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .bio-card {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+            align-items: start;
+        }
+
+        .bio-image {
+            text-align: center;
+        }
+
+        .bio-image img {
+            width: 100%;
+            max-width: 250px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            border: 3px solid #667eea;
+        }
+
+        .bio-text p {
+            margin-bottom: 15px;
+            text-align: justify;
+            font-size: 1.05em;
+        }
+
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .timeline-item {
+            padding-left: 50px;
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .timeline-item:before {
+            content: '';
+            width: 12px;
+            height: 12px;
+            background: #667eea;
+            border-radius: 50%;
+            position: absolute;
+            left: 15px;
+            top: 5px;
+            border: 3px solid white;
+            box-shadow: 0 0 0 3px #667eea;
+        }
+
+        .timeline-item:after {
+            content: '';
+            position: absolute;
+            left: 26px;
+            top: 30px;
+            width: 2px;
+            height: calc(100% + 10px);
+            background: #ddd;
+        }
+
+        .timeline-item:last-child:after {
+            display: none;
+        }
+
+        .timeline-item strong {
+            color: #667eea;
+            font-size: 1.1em;
+        }
+
+        .simulator {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .simulator-control {
+            margin-bottom: 20px;
+        }
+
+        .simulator-control label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .simulator-control input[type="range"] {
+            width: 100%;
+            height: 8px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+
+        .simulator-control input[type="number"] {
+            padding: 8px 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 4px;
+            font-size: 1em;
+            width: 100%;
+            max-width: 150px;
+        }
+
+        .result-box {
+            background: white;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 4px;
+            font-size: 1.1em;
+        }
+
+        .result-box strong {
+            color: #667eea;
+        }
+
+        canvas {
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            background: white;
+            width: 100%;
+            max-width: 100%;
+            margin-top: 20px;
+        }
+
+        .quiz-container {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .question {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .question:last-child {
+            border-bottom: none;
+        }
+
+        .question h4 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .option {
+            margin-bottom: 10px;
+        }
+
+        .option input[type="radio"] {
+            margin-right: 10px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+
+        .option label {
+            cursor: pointer;
+            display: inline-block;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            box-shadow: 0 10px 20px rgba(108, 117, 125, 0.3);
+        }
+
+        .quiz-result {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .quiz-result.show {
+            display: block;
+        }
+
+        .quiz-result h4 {
+            color: #155724;
+            margin-bottom: 10px;
+        }
+
+        .quiz-result p {
+            color: #155724;
+        }
+
+        .theory-box {
+            background: #e7f3ff;
+            border-left: 4px solid #2196F3;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .theory-box strong {
+            color: #1565c0;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .gallery-item {
+            background: #f8f9fa;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.3s;
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+
+        .gallery-item p {
+            padding: 15px;
+            font-size: 0.95em;
+            text-align: center;
+            color: #666;
+        }
+
+        footer {
+            background: #f8f9fa;
+            text-align: center;
+            padding: 20px;
+            border-top: 1px solid #e9ecef;
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            .bio-card {
+                grid-template-columns: 1fr;
+            }
+
+            nav {
+                flex-direction: column;
+            }
+
+            nav button {
+                border-bottom: none;
+                border-right: 3px solid transparent;
+            }
+
+            nav button.active {
+                border-right-color: #667eea;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Julius Robert Mayer</h1>
+            <p>Explorador del Equivalente Mecánico del Calor</p>
+        </header>
+
+        <nav>
+            <button onclick="showSection('biografía')" class="nav-btn active">Biografía</button>
+            <button onclick="showSection('teorias')" class="nav-btn">Teorías</button>
+            <button onclick="showSection('simulador')" class="nav-btn">Simulador</button>
+            <button onclick="showSection('test')" class="nav-btn">Test</button>
+        </nav>
+
+        <div class="content">
+            <!-- SECCIÓN BIOGRAFÍA -->
+            <section id="biografía" class="active">
+                <h2>Biografía</h2>
+                
+                <div class="bio-card">
+                    <div class="bio-image">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Robert_Mayer.jpg/400px-Robert_Mayer.jpg" alt="Julius Robert Mayer">
+                    </div>
+                    <div class="bio-text">
+                        <p><strong>Julius Robert von Mayer</strong> (1814-1878) fue un médico y físico alemán revolucionario que realizó contribuciones fundamentales a la comprensión de la energía y la termodinámica.</p>
+                        
+                        <p>Nacido en Heilbronn, Alemania, Mayer fue un pensador independiente que no siempre siguió los caminos académicos tradicionales. Su mayor logro fue el descubrimiento del <strong>equivalente mecánico del calor</strong>, que demostró que el calor y el trabajo mecánico son formas de energía intercambiables.</p>
+
+                        <p>Sus teorías sobre la <strong>conservación de la energía</strong> anticiparon el primer principio de la termodinámica. Aunque sus ideas fueron rechazadas inicialmente, hoy se reconoce su trabajo como fundamental para la física moderna.</p>
+                    </div>
+                </div>
+
+                <h3>Cronología de su vida</h3>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <strong>1814</strong> - Nace en Heilbronn, Württemberg, Alemania
+                    </div>
+                    <div class="timeline-item">
+                        <strong>1832</strong> - Comienza sus estudios de medicina en Tübingen
+                    </div>
+                    <div class="timeline-item">
+                        <strong>1838</strong> - Se gradúa como médico
+                    </div>
+                    <div class="timeline-item">
+                        <strong>1840</strong> - Sirve como médico en barcos hacia las Indias Orientales
+                    </div>
+                    <div class="timeline-item">
+                        <strong>1842</strong> - Publica su primer trabajo sobre el equivalente mecánico del calor
+                    </div>
+                    <div class="timeline-item">
+                        <strong>1845</strong> - Recibe reconocimiento académico por sus trabajos sobre energía
+                    </div>
+                    <div class="timeline-item">
+                        <strong>1860</strong> - Comienza a recibir reconocimiento internacional
+                    </div>
+                    <div class="timeline-item">
+                        <strong>1878</strong> - Fallece en Heilbronn a los 63 años
+                    </div>
+                </div>
+
+                <h3>Logros principales</h3>
+                <ul style="margin-left: 20px; margin-top: 15px;">
+                    <li style="margin-bottom: 10px;"><strong>Equivalente mecánico del calor:</strong> Demostró que 1 caloría = 4.186 julios</li>
+                    <li style="margin-bottom: 10px;"><strong>Ley de conservación de la energía:</strong> Propuso que la energía no se crea ni se destruye, solo se transforma</li>
+                    <li style="margin-bottom: 10px;"><strong>Termodinámica:</strong> Contribuyó fundamentalmente al desarrollo de esta rama de la física</li>
+                    <li style="margin-bottom: 10px;"><strong>Física del movimiento perpetuo:</strong> Explicó por qué el movimiento perpetuo es imposible</li>
+                </ul>
+            </section>
+
+            <!-- SECCIÓN TEORÍAS -->
+            <section id="teorias">
+                <h2>Teorías Científicas</h2>
+
+                <div class="theory-box">
+                    <strong>La Ley de Conservación de la Energía</strong>
+                    <p>La energía no se crea ni se destruye, solo se transforma de una forma a otra. Esta es una de las leyes más fundamentales de la física y fue propuesta por Mayer en 1842.</p>
+                </div>
+
+                <h3>El Equivalente Mecánico del Calor</h3>
+                <p>Mayer demostró experimentalmente que el trabajo mecánico puede convertirse directamente en calor y viceversa. La relación es:</p>
+                <div class="theory-box">
+                    <strong>1 caloría = 4.186 julios</strong>
+                    <p>Esto significa que si realizas 4.186 julios de trabajo, puedes producir 1 caloría de calor. Este descubrimiento fue revolucionario porque unificó dos campos que parecían separados: la mecánica y la termodinámica.</p>
+                </div>
+
+                <h3>Ciclo de Carnot y Mayer</h3>
+                <p>Aunque Carnot desarrolló el ciclo termodinámico teórico, Mayer proporciono el vínculo crucial entre trabajo y calor que permitió comprender completamente cómo funcionan los motores térmicos.</p>
+
+                <h3>Imposibilidad del Movimiento Perpetuo</h3>
+                <p>Basándose en la conservación de la energía, Mayer demostró matemáticamente que es imposible crear un dispositivo que produzca más energía de la que consume. Esto invalidó décadas de intentos fallidos de inventar máquinas de movimiento perpetuo.</p>
+
+                <h3>Cambios de Temperatura en Gases</h3>
+                <p>Mayer estudió cómo la temperatura de un gas varía con la presión y el volumen, contribuyendo a la comprensión de las propiedades de los gases ideales.</p>
+
+                <div class="theory-box" style="background: #fff3cd; border-left-color: #ffc107;">
+                    <strong>Dato Interesante</strong>
+                    <p>Mayer realizó sus observaciones cruciales mientras trabajaba como médico en un barco. Notó que la sangre venosa de los marineros era más roja en los trópicos que en zonas templadas, lo que le hizo reflexionar sobre cómo el cuerpo convierte los alimentos en calor y energía.</p>
+                </div>
+            </section>
+
+            <!-- SECCIÓN SIMULADOR -->
+            <section id="simulador">
+                <h2>Simuladores Interactivos</h2>
+
+                <!-- Simulador 1: Equivalente Mecánico del Calor -->
+                <div class="simulator">
+                    <h3>Simulador 1: Equivalente Mecánico del Calor</h3>
+                    <p>Observa cómo el trabajo mecánico se convierte en calor. Ajusta el trabajo realizado (en julios) y ve cuánto calor se genera.</p>
+                    
+                    <div class="simulator-control">
+                        <label for="work-input">Trabajo mecánico (Julios): <span id="work-value">100</span> J</label>
+                        <input type="range" id="work-input" min="0" max="1000" value="100" step="10">
+                    </div>
+
+                    <div class="result-box">
+                        <p><strong>Energía Mecánica (Trabajo):</strong> <span id="display-work">100</span> J</p>
+                        <p><strong>Energía Térmica (Calor):</strong> <span id="display-heat">23.92</span> cal</p>
+                        <p><strong>Equivalencia:</strong> 1 cal = 4.186 J (constante de Mayer)</p>
+                    </div>
+
+                    <canvas id="canvas-equivalence" width="500" height="300"></canvas>
+                </div>
+
+                <!-- Simulador 2: Expansión y Compresión de Gases -->
+                <div class="simulator">
+                    <h3>Simulador 2: Expansión Adiabática de un Gas</h3>
+                    <p>Simula cómo cambia la temperatura cuando un gas se expande sin intercambiar calor con el exterior (proceso adiabático).</p>
+                    
+                    <div class="simulator-control">
+                        <label for="volume-input">Volumen (litros): <span id="volume-value">1.0</span> L</label>
+                        <input type="range" id="volume-input" min="1" max="5" value="1" step="0.1">
+                    </div>
+
+                    <div class="result-box">
+                        <p><strong>Volumen Inicial:</strong> 1.0 L</p>
+                        <p><strong>Volumen Actual:</strong> <span id="display-volume">1.0</span> L</p>
+                        <p><strong>Temperatura Inicial:</strong> 300 K (27°C)</p>
+                        <p><strong>Temperatura Final:</strong> <span id="display-temp">300</span> K (<span id="display-temp-c">27</span>°C)</p>
+                        <p><strong>Cambio:</strong> <span id="temp-change">0</span>°C</p>
+                    </div>
+
+                    <canvas id="canvas-expansion" width="500" height="300"></canvas>
+                </div>
+
+                <!-- Simulador 3: Ciclo Carnot -->
+                <div class="simulator">
+                    <h3>Simulador 3: Ciclo de Carnot (Eficiencia Térmica)</h3>
+                    <p>Calcula la eficiencia máxima de un motor térmico trabajando entre dos temperaturas.</p>
+                    
+                    <div class="simulator-control">
+                        <label for="hot-temp-input">Temperatura caliente (K): <span id="hot-temp-value">600</span> K</label>
+                        <input type="range" id="hot-temp-input" min="300" max="1000" value="600" step="50">
+                    </div>
+
+                    <div class="simulator-control">
+                        <label for="cold-temp-input">Temperatura fría (K): <span id="cold-temp-value">300</span> K</label>
+                        <input type="range" id="cold-temp-input" min="100" max="400" value="300" step="50">
+                    </div>
+
+                    <div class="result-box">
+                        <p><strong>T<sub>caliente</sub>:</strong> <span id="display-hot-temp">600</span> K</p>
+                        <p><strong>T<sub>fría</sub>:</strong> <span id="display-cold-temp">300</span> K</p>
+                        <p><strong>Eficiencia de Carnot:</strong> <span id="carnot-efficiency">50</span>%</p>
+                        <p><em>Nota: Ningún motor real puede alcanzar esta eficiencia, pero es el máximo teórico posible.</em></p>
+                    </div>
+
+                    <canvas id="canvas-carnot" width="500" height="300"></canvas>
+                </div>
+            </section>
+
+            <!-- SECCIÓN TEST -->
+            <section id="test">
+                <h2>Test de Conocimiento</h2>
+                <p>Prueba tu comprensión sobre Julius Robert Mayer y sus teorías respondiendo este cuestionario.</p>
+
+                <div class="quiz-container">
+                    <div class="question">
+                        <h4>1. ¿En qué año Mayer publicó su trabajo sobre el equivalente mecánico del calor?</h4>
+                        <div class="option">
+                            <input type="radio" name="q1" value="a">
+                            <label>A) 1838</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" name="q1" value="b">
+                            <label>B) 1842</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" name="q1" value="c">
+                            <label>C) 1850</label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <h4>2. ¿Cuál es la relación entre calorías y julios (equivalente de Mayer)?</h4>
+                        <div class="option">
+                            <input type="radio" name="q2" value="a">
+                            <label>A) 1 caloría = 1 julio</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" name="q2" value="b">
+                            <label>B) 1 caloría = 4.186 julios</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" name="q2" value="c">
+                            <label>C) 1 caloría = 10 julios</label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <h4>3. ¿Qué ley fundamental propuso Mayer en 1842?</h4>
+                        <div class="option">
+                            <input type="radio" name="q3" value="a">
+                            <label>A) Ley de la gravedad</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" name="q3" value="b">
+                            <label>B) Ley de conservación de la energía</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" name="q3" value="c">
+                            <label>C) Segunda ley de Newton</label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <h4>4. ¿Cuál fue la profesión de Mayer?</h4>
+                        <div class="option">
+                            <input type="radio" name="q4" value="a">
+                            <label>A) Ingeniero</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" name="q4" value="b">
+                            <label>B) Médico</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" name="q4" value="c">
+                            <label>C) Profesor de matemáticas</label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <h4>5. ¿En qué ciudad nació Julius Robert Mayer?</h4>
+                        <div class="option">
+                            <input type="radio" name="q5" value="a">
+                            <label>A) Berlín</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" name="q5" value="b">
+                            <label>B) Múnich</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" name="q5" value="c">
+                            <label>C) Heilbronn</label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <h4>6. ¿Qué demostró Mayer sobre el movimiento perpetuo?</h4>
+                        <div class="option">
+                            <input type="radio" name="q6" value="a">
+                            <label>A) Que es posible pero muy difícil</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" name="q6" value="b">
+                            <label>B) Que es imposible según la ley de conservación de la energía</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" name="q6" value="c">
+                            <label>C) Que requiere energía externa mínima</label>
+                        </div>
+                    </div>
+
+                    <button class="btn" onclick="checkQuiz()">Enviar Respuestas</button>
+                    <button class="btn btn-secondary" onclick="resetQuiz()" style="margin-left: 10px;">Limpiar</button>
+                </div>
+
+                <div class="quiz-result" id="quiz-result">
+                    <h4>Resultados de tu Test</h4>
+                    <p id="result-text"></p>
+                </div>
+            </section>
+        </div>
+
+        <footer>
+            <p>&copy; 2024 Julius Robert Mayer - Simulador Educativo | Creado con HTML5, CSS3 y JavaScript</p>
+        </footer>
+    </div>
+
+    <script>
+        // Navegación
+        function showSection(sectionId) {
+            // Ocultar todas las secciones
+            const sections = document.querySelectorAll('section');
+            sections.forEach(section => section.classList.remove('active'));
+
+            // Mostrar la sección seleccionada
+            document.getElementById(sectionId).classList.add('active');
+
+            // Actualizar botones de navegación
+            const navBtns = document.querySelectorAll('.nav-btn');
+            navBtns.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Redibujar canvas si es necesario
+            setTimeout(() => {
+                drawEquivalenceChart();
+                drawExpansionChart();
+                drawCarnot();
+            }, 100);
+        }
+
+        // SIMULADOR 1: Equivalente mecánico del calor
+        const workInput = document.getElementById('work-input');
+        workInput.addEventListener('input', function() {
+            const work = parseFloat(this.value);
+            const heat = work / 4.186;
+            
+            document.getElementById('work-value').textContent = work;
+            document.getElementById('display-work').textContent = work;
+            document.getElementById('display-heat').textContent = heat.toFixed(2);
+            
+            drawEquivalenceChart();
+        });
+
+        function drawEquivalenceChart() {
+            const canvas = document.getElementById('canvas-equivalence');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            const work = parseFloat(document.getElementById('work-input').value);
+            const heat = work / 4.186;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#f8f9fa';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Título
+            ctx.fillStyle = '#333';
+            ctx.font = 'bold 16px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('Conversión Trabajo → Calor', canvas.width / 2, 30);
+
+            // Barra de trabajo
+            ctx.fillStyle = '#667eea';
+            const workWidth = (work / 1000) * 150;
+            ctx.fillRect(50, 80, workWidth, 40);
+            ctx.fillStyle = '#333';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'left';
+            ctx.fillText(`Trabajo: ${work.toFixed(0)} J`, 60, 110);
+
+            // Flecha
+            ctx.strokeStyle = '#764ba2';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(250, 100);
+            ctx.lineTo(290, 100);
+            ctx.stroke();
+            ctx.fillStyle = '#764ba2';
+            ctx.beginPath();
+            ctx.moveTo(290, 100);
+            ctx.lineTo(280, 95);
+            ctx.lineTo(280, 105);
+            ctx.fill();
+
+            // Barra de calor
+            ctx.fillStyle = '#ff6b6b';
+            const heatWidth = (heat / 250) * 150;
+            ctx.fillRect(320, 80, heatWidth, 40);
+            ctx.fillStyle = '#333';
+            ctx.textAlign = 'left';
+            ctx.fillText(`Calor: ${heat.toFixed(2)} cal`, 330, 110);
+
+            // Ecuación
+            ctx.font = '14px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('E = Q × 4.186', canvas.width / 2, 200);
+        }
+
+        // SIMULADOR 2: Expansión adiabática
+        const volumeInput = document.getElementById('volume-input');
+        volumeInput.addEventListener('input', function() {
+            const volume = parseFloat(this.value);
+            const ratio = Math.pow(volume, -0.4); // Exponente adiabático para aire
+            const tempK = 300 * ratio;
+            const tempC = tempK - 273;
+            const change = tempC - 27;
+
+            document.getElementById('volume-value').textContent = volume.toFixed(1);
+            document.getElementById('display-volume').textContent = volume.toFixed(1);
+            document.getElementById('display-temp').textContent = tempK.toFixed(0);
+            document.getElementById('display-temp-c').textContent = tempC.toFixed(1);
+            document.getElementById('temp-change').textContent = change.toFixed(1);
+
+            drawExpansionChart();
+        });
+
+        function drawExpansionChart() {
+            const canvas = document.getElementById('canvas-expansion');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            const volume = parseFloat(document.getElementById('volume-input').value);
+            const ratio = Math.pow(volume, -0.4);
+            const tempK = 300 * ratio;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#f8f9fa';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Título
+            ctx.fillStyle = '#333';
+            ctx.font = 'bold 16px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('Proceso Adiabático: Expansión de Gas', canvas.width / 2, 30);
+
+            // Dibujar cilindro de gas
+            const cylinderX = 50;
+            const cylinderY = 80;
+            const cylinderHeight = 100;
+            const cylinderWidth = (volume / 5) * 200;
+
+            ctx.strokeStyle = '#667eea';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(cylinderX, cylinderY, cylinderWidth, cylinderHeight);
+
+            // Relleno con gradiente
+            const gradient = ctx.createLinearGradient(cylinderX, cylinderY, cylinderX, cylinderY + cylinderHeight);
+            gradient.addColorStop(0, 'rgba(102, 126, 234, 0.3)');
+            gradient.addColorStop(1, 'rgba(118, 75, 162, 0.3)');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(cylinderX, cylinderY, cylinderWidth, cylinderHeight);
+
+            // Partículas de gas
+            ctx.fillStyle = 'rgba(102, 126, 234, 0.6)';
+            const particleCount = Math.ceil(volume * 10);
+            for (let i = 0; i < particleCount; i++) {
+                const x = cylinderX + Math.random() * cylinderWidth;
+                const y = cylinderY + Math.random() * cylinderHeight;
+                ctx.beginPath();
+                ctx.arc(x, y, 3, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Información
+            ctx.fillStyle = '#333';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'left';
+            ctx.fillText(`Volumen: ${volume.toFixed(1)} L`, 50, 220);
+            ctx.fillText(`Temperatura: ${tempK.toFixed(0)} K (${(tempK - 273).toFixed(1)}°C)`, 50, 245);
+
+            // Relación PV = nRT
+            ctx.font = '11px Arial';
+            ctx.fillText('Ley de gases: PV = nRT', 50, 270);
+        }
+
+        // SIMULADOR 3: Ciclo de Carnot
+        const hotTempInput = document.getElementById('hot-temp-input');
+        const coldTempInput = document.getElementById('cold-temp-input');
+
+        function updateCarnot() {
+            const hotTemp = parseFloat(hotTempInput.value);
+            const coldTemp = parseFloat(coldTempInput.value);
+            const efficiency = ((hotTemp - coldTemp) / hotTemp) * 100;
+
+            document.getElementById('hot-temp-value').textContent = hotTemp;
+            document.getElementById('cold-temp-value').textContent = coldTemp;
+            document.getElementById('display-hot-temp').textContent = hotTemp;
+            document.getElementById('display-cold-temp').textContent = coldTemp;
+            document.getElementById('carnot-efficiency').textContent = efficiency.toFixed(2);
+
+            drawCarnot();
+        }
+
+        hotTempInput.addEventListener('input', updateCarnot);
+        coldTempInput.addEventListener('input', updateCarnot);
+
+        function drawCarnot() {
+            const canvas = document.getElementById('canvas-carnot');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            const hotTemp = parseFloat(document.getElementById('hot-temp-input').value);
+            const coldTemp = parseFloat(document.getElementById('cold-temp-input').value);
+            const efficiency = ((hotTemp - coldTemp) / hotTemp) * 100;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#f8f9fa';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Título
+            ctx.fillStyle = '#333';
+            ctx.font = 'bold 16px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('Ciclo de Carnot: Eficiencia de Motor Térmico', canvas.width / 2, 30);
+
+            // Reservorio caliente
+            ctx.fillStyle = '#ff6b6b';
+            ctx.fillRect(50, 60, 100, 60);
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 12px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(`T_c = ${hotTemp} K`, 100, 95);
+
+            // Reservorio frío
+            ctx.fillStyle = '#4ecdc4';
+            ctx.fillRect(350, 60, 100, 60);
+            ctx.fillStyle = 'white';
+            ctx.fillText(`T_f = ${coldTemp} K`, 400, 95);
+
+            // Motor en el medio
+            ctx.fillStyle = '#667eea';
+            ctx.beginPath();
+            ctx.arc(250, 90, 30, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 10px Arial';
+            ctx.fillText('Motor', 250, 95);
+
+            // Flechas
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 5]);
+
+            // Entrada de calor
+            ctx.beginPath();
+            ctx.moveTo(150, 90);
+            ctx.lineTo(220, 90);
+            ctx.stroke();
+
+            // Salida de trabajo
+            ctx.beginPath();
+            ctx.moveTo(280, 90);
+            ctx.lineTo(350, 90);
+            ctx.stroke();
+
+            ctx.setLineDash([]);
+
+            // Información
+            ctx.fillStyle = '#333';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'center';
+            const barHeight = (efficiency / 100) * 150;
+            ctx.fillRect(100, 200 + (150 - barHeight), 100, barHeight);
+            ctx.fillStyle = '#667eea';
+            ctx.font = 'bold 14px Arial';
+            ctx.fillText(`Eficiencia: ${efficiency.toFixed(2)}%`, 250, 240);
+
+            ctx.fillStyle = '#999';
+            ctx.font = '11px Arial';
+            ctx.fillText('η = 1 - (T_f / T_c)', 250, 270);
+        }
+
+        // TEST/QUIZ
+        function checkQuiz() {
+            const answers = {
+                q1: 'b',
+                q2: 'b',
+                q3: 'b',
+                q4: 'b',
+                q5: 'c',
+                q6: 'b'
+            };
+
+            let score = 0;
+            const totalQuestions = 6;
+
+            for (let q in answers) {
+                const selected = document.querySelector(`input[name="${q}"]:checked`);
+                if (selected && selected.value === answers[q]) {
+                    score++;
+                }
+            }
+
+            const percentage = (score / totalQuestions) * 100;
+            const resultDiv = document.getElementById('quiz-result');
+            const resultText = document.getElementById('result-text');
+
+            let message = '';
+            if (percentage === 100) {
+                message = `¡Excelente! Has acertado todas las respuestas (${score}/${totalQuestions}). Eres un experto en Julius Robert Mayer.`;
+            } else if (percentage >= 80) {
+                message = `¡Muy bien! Has acertado ${score} de ${totalQuestions} preguntas (${percentage.toFixed(0)}%). Tienes un buen dominio del tema.`;
+            } else if (percentage >= 60) {
+                message = `¡Bien! Has acertado ${score} de ${totalQuestions} preguntas (${percentage.toFixed(0)}%). Te recomendamos repasar algunos conceptos.`;
+            } else {
+                message = `Has acertado ${score} de ${totalQuestions} preguntas (${percentage.toFixed(0)}%). Te sugerimos revisar la sección de teorías antes de intentar nuevamente.`;
+            }
+
+            resultText.textContent = message;
+            resultDiv.classList.add('show');
+        }
+
+        function resetQuiz() {
+            document.querySelectorAll('input[type="radio"]').forEach(input => input.checked = false);
+            document.getElementById('quiz-result').classList.remove('show');
+        }
+
+        // Inicializar gráficos al cargar
+        window.addEventListener('load', function() {
+            drawEquivalenceChart();
+            drawExpansionChart();
+            drawCarnot();
+        });
+    </script>
+</body>
+</html>
